@@ -24,6 +24,7 @@ public:
     void Reload();
     bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
     bool GetCurrentAmmoData(FAmmoData& AmmoData) const;
+    bool TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipsCount);
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -36,7 +37,7 @@ protected:
     FName WeaponArmorySocketName = "ArmorySocket";
 
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
-    UAnimMontage* EquipAnimMontage;
+    UAnimMontage* EquipAnimMontage = nullptr;
 
 	virtual void BeginPlay() override;
     virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
@@ -68,6 +69,6 @@ private:
     bool CanEquip();
     bool CanReload();
 
-    void OnEmptyClip();
+    void OnEmptyClip(ASTUBaseWeapon* EmptyWeapon);
     void ChangeClip();
 };

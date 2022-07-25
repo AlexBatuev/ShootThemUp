@@ -13,7 +13,6 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
     GENERATED_BODY()
 
 public:
-    // Sets default values for this component's properties
     USTUHealthComponent();
 
     FOnDeathSignature OnDeath;
@@ -26,6 +25,7 @@ public:
     float GetHealthPercent() const { return Health / MaxHealth;  }
 
     float GetHealth() const { return Health; }
+    bool TryToAddHealth(float HealthCount);
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
@@ -43,7 +43,6 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.f, ClampMax = 1000.f))
     float MaxHealth = 100.f;
 
-    // Called when the game starts
     virtual void BeginPlay() override;
 
 private:
@@ -58,4 +57,5 @@ private:
     void OnHeal();
 
     void SetHealth(float Value);
+    bool IsHealthFull() const;
 };

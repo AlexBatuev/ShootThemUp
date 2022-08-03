@@ -2,6 +2,7 @@
 
 #include "Weapon/STUBaseWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Character.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
@@ -89,6 +90,7 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
     FCollisionQueryParams CollisionParams;
     CollisionParams.AddIgnoredActor(GetOwner());
+    CollisionParams.bReturnPhysicalMaterial = true;
     GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, CollisionParams);
 }
 
@@ -174,7 +176,7 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsCount)
     return true;
 }
 
-void ASTUBaseWeapon::LogAmmo()
+void ASTUBaseWeapon::LogAmmo() const
 {
     auto AmmoInfo = "Ammo: " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
     AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
@@ -184,4 +186,10 @@ void ASTUBaseWeapon::LogAmmo()
 bool ASTUBaseWeapon::IsAmmoFull() const
 {
     return CurrentAmmo.Clips == DefaultAmmo.Clips && CurrentAmmo.Bullets == DefaultAmmo.Bullets;
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX() const
+{
+    return UNiagaraFunctionLibrary::SpawnSystemAttached(
+        MuzzleFX, WeaponMesh, MuzzleSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
 }

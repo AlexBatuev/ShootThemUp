@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/Components/STUWeaponFXComponent.h"
 
 ASTUProjectile::ASTUProjectile()
 {
@@ -15,11 +16,14 @@ ASTUProjectile::ASTUProjectile()
     CollisionComponent->InitSphereRadius(5.f);
     CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     CollisionComponent->SetCollisionResponseToAllChannels(ECR_Block);
+    CollisionComponent->bReturnMaterialOnMove = true;
     SetRootComponent(CollisionComponent);
 
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
     MovementComponent->InitialSpeed = 2000.f;
     MovementComponent->ProjectileGravityScale = 0.f;
+
+    FXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("FXComponent");
 }
 
 void ASTUProjectile::BeginPlay()
@@ -28,6 +32,7 @@ void ASTUProjectile::BeginPlay()
 
     check(CollisionComponent);
     check(MovementComponent);
+    check(FXComponent);
 
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
     CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
@@ -46,8 +51,8 @@ void ASTUProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* 
     UGameplayStatics::ApplyRadialDamage(
         GetWorld(), DamageValue, GetActorLocation(), DamageRadius, UDamageType::StaticClass(), {GetOwner()}, this, GetController(), DoFullDamage);
 
-    DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.f);
-
+    //DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.f);
+    FXComponent->PlayImpactFX(HitResult);
     Destroy();
 }
 

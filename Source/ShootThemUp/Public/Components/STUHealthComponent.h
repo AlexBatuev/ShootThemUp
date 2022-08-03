@@ -7,6 +7,8 @@
 #include "Components/ActorComponent.h"
 #include "STUHealthComponent.generated.h"
 
+class UCameraShakeBase;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 {
@@ -43,6 +45,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.f, ClampMax = 1000.f))
     float MaxHealth = 100.f;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ClampMin = 0.f, ClampMax = 1000.f))
+    TSubclassOf<UCameraShakeBase> CameraShake;
+
     virtual void BeginPlay() override;
 
 private:
@@ -58,4 +63,6 @@ private:
 
     void SetHealth(float Value);
     bool IsHealthFull() const;
+
+    void PlayCameraShake() const;
 };

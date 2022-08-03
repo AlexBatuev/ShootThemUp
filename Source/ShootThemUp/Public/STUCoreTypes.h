@@ -34,11 +34,6 @@ struct FWeaponData
     UAnimMontage* ReloadAnimMontage;
 };
 
-// Health
-
-DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float);
-
 USTRUCT(BlueprintType)
 struct FWeaponUIData
 {
@@ -51,3 +46,41 @@ struct FWeaponUIData
     UTexture2D* CrossHairIcon;
 };
 
+// Health
+
+DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, float);
+
+// VFX
+
+class UNiagaraSystem;
+
+USTRUCT(BlueprintType)
+struct FDecalData
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    UMaterialInterface* Material;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    FVector Size = FVector(10.f);
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    float LifeTime = 5.f;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    float FadeOutTime = 0.7f;
+};
+
+USTRUCT(BlueprintType)
+struct FImpactData
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    UNiagaraSystem* UNiagaraEffect;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
+    FDecalData DecalData;
+};

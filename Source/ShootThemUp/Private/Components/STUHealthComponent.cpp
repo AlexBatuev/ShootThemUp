@@ -2,6 +2,8 @@
 
 #include "Components/STUHealthComponent.h"
 
+#include "GameFramework/GameState.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All);
 
 // Sets default values for this component's properties
@@ -54,6 +56,8 @@ void USTUHealthComponent::OnTakeAnyDamage(
     {
         GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::OnHeal, HealUpdateTime, true, HealDelay);
     }
+
+    PlayCameraShake();
 }
 
 void USTUHealthComponent::OnHeal()
@@ -71,11 +75,26 @@ void USTUHealthComponent::OnHeal()
 
 void USTUHealthComponent::SetHealth(const float Value)
 {
-    Health = FMath::Clamp(Value, 0.f, MaxHealth);
-    OnHealthChanged.Broadcast(Health);
+    const auto NewHealth = FMath::Clamp(Value, 0.f, MaxHealth);
+    const auto HealthDelta = NewHealth - Health;
+    OnHealthChanged.Broadcast(Health, HealthDelta);
+    Health = NewHealth;
 }
 
 bool USTUHealthComponent::IsHealthFull() const
 {
     return FMath::IsNearlyEqual(Health, MaxHealth);
+}
+
+void USTUHealthComponent::PlayCameraShake() const
+{
+    if (IsDead()) return;
+    
+    const auto Player = Cast<APawn>(GetOwner());
+    if (!Player) return;
+    
+    const auto Controller = Player->GetController<APlayerController>();
+    if(!Controller || !Controller->PlayerCameraManager) return;
+    
+    Controller->PlayerCameraManager->StartCameraShake(CameraShake);
 }

@@ -28,6 +28,8 @@ public:
     FWeaponUIData GetUIData() const { return UIData; }
     FAmmoData GetAmmoData() const { return CurrentAmmo; }
     bool TryToAddAmmo(int32 ClipsCount);
+    bool IsAmmoEmpty() const;
+    bool IsAmmoFull() const;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -58,10 +60,8 @@ protected:
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
 
     void DecreaseAmmo();
-    bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
     void LogAmmo() const;
-    bool IsAmmoFull() const;
 
     UNiagaraComponent* SpawnMuzzleFX() const;
 

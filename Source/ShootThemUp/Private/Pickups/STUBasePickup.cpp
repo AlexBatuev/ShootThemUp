@@ -33,6 +33,11 @@ void ASTUBasePickup::Tick(float DeltaTime)
     AddActorLocalRotation(FRotator(0.f, YawRotation, 0.f));
 }
 
+bool ASTUBasePickup::CouldBeTaken() const
+{
+    return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle);
+}
+
 void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     Super::NotifyActorBeginOverlap(OtherActor);
@@ -57,9 +62,7 @@ void ASTUBasePickup::PickupWasTaken()
         GetRootComponent()->SetVisibility(false, true);
     }
     
-    FTimerHandle RespawnTimerHandle;
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
-
 }
 
 void ASTUBasePickup::Respawn()

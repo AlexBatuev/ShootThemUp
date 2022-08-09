@@ -1,7 +1,6 @@
 // Shoot Them Up Game. All Rights Reserved.
 
 #include "Components/STUWeaponComponent.h"
-
 #include "Animations/AnimUtils.h"
 #include "Animations/STUEquipFinishedAnimNotify.h"
 #include "Animations/STUReloadFinishedAnimNotify.h"
@@ -160,7 +159,19 @@ bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, i
     return true;
 }
 
-void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* AnimMontage)
+bool USTUWeaponComponent::NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return !Weapon->IsAmmoFull();
+        }
+    }
+    return true;
+}
+
+void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* AnimMontage) const
 {
     const auto Character = Cast<ACharacter>(GetOwner());
     if (!Character || !GetWorld())
@@ -213,17 +224,17 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
     ReloadAnimInProgress = false;
 }
 
-bool USTUWeaponComponent::CanFire()
+bool USTUWeaponComponent::CanFire() const
 {
     return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
-bool USTUWeaponComponent::CanEquip()
+bool USTUWeaponComponent::CanEquip() const
 {
     return !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
-bool USTUWeaponComponent::CanReload()
+bool USTUWeaponComponent::CanReload() const
 {
     return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress && CurrentWeapon->CanReload();
 }

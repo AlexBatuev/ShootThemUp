@@ -3,12 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "STUPlayerState.h"
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
-class UCameraComponent;
-class USpringArmComponent;
-class UTextRenderComponent;
 class USTUHealthComponent;
 class USTUWeaponComponent;
 
@@ -21,19 +19,9 @@ public:
     ASTUBaseCharacter(const FObjectInitializer& Initializer);
 
 protected:
-
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-    UCameraComponent* CameraComponent;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-    USpringArmComponent* SpringArmComponent;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USTUHealthComponent* HealthComponent;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-    UTextRenderComponent* HealthTextComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USTUWeaponComponent* WeaponComponent;
@@ -50,29 +38,25 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.f, 100.f);
 
+    UPROPERTY(EditDefaultsOnly, Category = "Material")
+    FName MaterialColorName = "Paint Color";
+
     virtual void BeginPlay() override;
     virtual void OnDeath();
-    virtual void OnHealthChanged(float Health, float HealthDelta) const;
 
 public:
     virtual void Tick(float DeltaTime) override;
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
-    bool IsRunning() const;
+    virtual bool IsRunning() const;
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
     float GetMovementDirection() const;
+    void SetColor(const FLinearColor& Color);
 
 private:
-    bool NeedRunnig = false;
-    bool IsMovingForward = false;
-
-    void MoveForward(float Value);
-    void MoveRight(float Value);
-
-    void OnStartRunning();
-    void OnStopRunning();
-
+    virtual void OnHealthChanged(float Health, float HealthDelta) const;
+    
+    UFUNCTION(BlueprintCallable, Category = "Movement")
     virtual void Landed(const FHitResult& Hit) override;
 };

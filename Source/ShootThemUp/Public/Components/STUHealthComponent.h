@@ -65,4 +65,6 @@ private:
     bool IsHealthFull() const;
 
     void PlayCameraShake() const;
+
+    void OnKilled(const AController* KillerController) const;
 };

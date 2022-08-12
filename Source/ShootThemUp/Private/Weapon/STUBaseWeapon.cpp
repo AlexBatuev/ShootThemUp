@@ -41,19 +41,6 @@ void ASTUBaseWeapon::MakeShot()
 
 }
 
-APlayerController* ASTUBaseWeapon::GetPlayerController() const
-{
-    const auto Player = Cast<ACharacter>(GetOwner());
-    if (!Player)
-        return nullptr;
-
-    const auto Controller = Player->GetController<APlayerController>();
-    if (!Controller)
-        return nullptr;
-
-    return Controller;
-}
-
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
     const auto Character = Cast<ACharacter>(GetOwner());
@@ -61,7 +48,7 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 
     if(Character->IsPlayerControlled())
     {
-        const auto Controller = GetPlayerController();
+        const auto Controller = Character->GetController<APlayerController>();
 
         Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
         if (!Controller)
@@ -146,7 +133,7 @@ void ASTUBaseWeapon::ChangeClip()
     }
     CurrentAmmo.Bullets = DefaultAmmo.Bullets;
 
-    UE_LOG(LogBaseWeapon, Display, TEXT("=== Change clip ==="));
+    //UE_LOG(LogBaseWeapon, Display, TEXT("=== Change clip ==="));
 }
 
 bool ASTUBaseWeapon::CanReload() const

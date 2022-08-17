@@ -4,6 +4,7 @@
 
 #include "AIController.h"
 #include "EngineUtils.h"
+#include "STUGameInstance.h"
 #include "STUUtils.h"
 #include "Components/STURespawnComponent.h"
 #include "Player/STUBaseCharacter.h"
@@ -26,12 +27,14 @@ ASTUGameModeBase::ASTUGameModeBase()
 void ASTUGameModeBase::StartPlay()
 {
     Super::StartPlay();
-
+    
     SpawnBots();
     CreateTeamsInfo();
     
     CurrentRound = 1;
     StartRound();
+
+    SetGameState(ESTUGameState::InProgress);
 }
 
 UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
@@ -63,6 +66,26 @@ void ASTUGameModeBase::OnKill(const AController* KillerController, AController* 
 void ASTUGameModeBase::RespawnPlayer(AController* Controller)
 {
     ResetPlayer(Controller);
+}
+
+bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+    const auto PauseState = Super::SetPause(PC, CanUnpauseDelegate);
+    if (PauseState)
+    {
+        SetGameState(ESTUGameState::Pause);
+    }
+    return PauseState;
+}
+
+bool ASTUGameModeBase::ClearPause()
+{
+    const auto ClearResult = Super::ClearPause();
+    if (ClearResult)
+    {
+        SetGameState(ESTUGameState::InProgress);
+    }
+    return ClearResult;
 }
 
 void ASTUGameModeBase::SpawnBots()
@@ -144,6 +167,7 @@ void ASTUGameModeBase::CreateTeamsInfo() const
 
         PlayerState->SetTemId(TeamId);
         PlayerState->SetTeamColor(DetermineColorByTeamId(TeamId));
+        PlayerState->SetPlayerName(Controller->IsPlayerController() ? "Player" : "Bot");
         SetPlayerColor(Controller);
 
         TeamId = TeamId == 1 ? 2 : 1;
@@ -214,4 +238,13 @@ void ASTUGameModeBase::GameOver()
             Pawn->DisableInput(nullptr);            
         }
     }
+    SetGameState(ESTUGameState::GameOver);
+}
+
+void ASTUGameModeBase::SetGameState(ESTUGameState NewState)
+{
+    if (GameState == NewState) return;
+
+    GameState = NewState;
+    OnGameStateChange.Broadcast(GameState);    
 }

@@ -24,12 +24,6 @@ int32 USTUGameDataWidget::GetTotalRounds() const
     return GameMode ? GameMode->GetTotalRounds() : 0;
 }
 
-int32 USTUGameDataWidget::GetKillsCount() const
-{
-    const auto PlayerState = GetPlayerState();
-    return PlayerState ? PlayerState->GetKillsCount() : 0;
-}
-
 int32 USTUGameDataWidget::GetDeathsCount() const
 {
     const auto PlayerState = GetPlayerState();

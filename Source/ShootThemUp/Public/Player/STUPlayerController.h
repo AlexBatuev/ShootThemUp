@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "STUCoreTypes.h"
 #include "GameFramework/PlayerController.h"
 #include "STUPlayerController.generated.h"
 
@@ -20,5 +21,11 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
     USTURespawnComponent* RespawnComponent;
 
+    virtual void BeginPlay() override;
     //virtual void OnPossess(APawn* InPawn) override;
+    virtual void SetupInputComponent() override;
+
+private:
+    void OnPause();
+    void OnGameStateChanged(ESTUGameState State);
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "STUCoreTypes.h"
+#include "GameFramework/GameMode.h"
 #include "GameFramework/GameModeBase.h"
 #include "STUGameModeBase.generated.h"
 
@@ -17,6 +18,8 @@ class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 public:
     ASTUGameModeBase();
 
+    FOnGameStateChangeSignature OnGameStateChange;
+
     virtual void StartPlay() override;
     virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
@@ -27,6 +30,9 @@ public:
     //int32 GetGameData() const { return GameData; }
     int32 GetElapsedRoundTime() const { return RoundCountDown; }
     void RespawnPlayer(AController* Controller);
+
+    virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate) override;
+    virtual bool ClearPause() override;
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category="Game")
@@ -39,6 +45,7 @@ protected:
     FGameData GameData;
 
 private:
+    ESTUGameState GameState = ESTUGameState::WaitingToStart;
     int32 CurrentRound = 1;
     int32 RoundCountDown = 0;
     FTimerHandle GameRoundTimerHandle;
@@ -59,4 +66,6 @@ private:
     void StartRespawn(AController* Controller);
 
     void GameOver();
+
+    void SetGameState(ESTUGameState NewState);
 };

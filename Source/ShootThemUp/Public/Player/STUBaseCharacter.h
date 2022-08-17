@@ -44,6 +44,8 @@ protected:
     virtual void BeginPlay() override;
     virtual void OnDeath();
 
+    virtual void OnHealthChanged(float Health, float HealthDelta) const;
+
 public:
     virtual void Tick(float DeltaTime) override;
 
@@ -55,8 +57,6 @@ public:
     void SetColor(const FLinearColor& Color);
 
 private:
-    virtual void OnHealthChanged(float Health, float HealthDelta) const;
-    
     UFUNCTION(BlueprintCallable, Category = "Movement")
     virtual void Landed(const FHitResult& Hit) override;
 };

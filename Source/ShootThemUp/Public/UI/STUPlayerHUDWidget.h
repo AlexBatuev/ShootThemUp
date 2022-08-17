@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "STUBaseWidget.h"
 #include "STUCoreTypes.h"
-#include "Blueprint/UserWidget.h"
 #include "STUPlayerHUDWidget.generated.h"
 
+class UProgressBar;
 class USTUHealthComponent;
 class USTUWeaponComponent;
 
 UCLASS()
-class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
+class SHOOTTHEMUP_API USTUPlayerHUDWidget : public USTUBaseWidget
 {
 	GENERATED_BODY()
 
@@ -34,10 +35,35 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "UI")
     void OnTakeDamage();
 
-    virtual bool Initialize() override;
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    int32 GetKillsCount() const;
+
+    UFUNCTION(BlueprintPure, Category = "UI")
+    FString FormatBullets(int32 BulletsNum) const;
+
+protected:
+    UPROPERTY(meta = (BindWidget))
+    UProgressBar* HealthBar;
+
+    UPROPERTY(meta = (BindWidgetAnim), Transient)
+    UWidgetAnimation* DamageAnimation;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    float PercentVisibilityThreshold = 0.8f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    float PercentColorThreshold = 0.3f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    FLinearColor GoodColor = FLinearColor::White;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    FLinearColor BadColor = FLinearColor::Red;
+    
+    virtual void NativeOnInitialized() override;
 
 private:
     void OnHealthChanged(float Health, float HealthDelta);
     void OnNewPawn(APawn* NewPawn);
-
+    void UpdateHealthBar();
 };

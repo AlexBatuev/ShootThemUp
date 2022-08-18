@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "STUBasePickup.generated.h"
 
+class USoundCue;
 class USphereComponent;
 
 UCLASS()
@@ -23,6 +24,9 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
     float RespawnTime = 5.f;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+    USoundCue* TakeSound;
+
 	virtual void BeginPlay() override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
@@ -31,7 +35,7 @@ public:
     bool CouldBeTaken() const;
 
 private:
-    float YawRotation = 0.0f;
+    float YawRotation;
     FTimerHandle RespawnTimerHandle;
 
     void UpdateYawRotation();

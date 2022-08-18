@@ -28,4 +28,5 @@ protected:
 private:
     void OnPause();
     void OnGameStateChanged(ESTUGameState State);
+    void OnMuteSound();
 };

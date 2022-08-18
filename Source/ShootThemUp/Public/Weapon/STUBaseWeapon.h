@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "STUBaseWeapon.generated.h"
 
+class USoundCue;
 class UNiagaraSystem;
 class UNiagaraComponent;
 
@@ -49,6 +50,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
     UNiagaraSystem* MuzzleFX;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+    USoundCue* FireSound;
 
     virtual void BeginPlay() override;
     virtual void MakeShot();

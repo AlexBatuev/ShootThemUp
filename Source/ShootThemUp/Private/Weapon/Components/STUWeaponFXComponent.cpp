@@ -6,6 +6,7 @@
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Sound/SoundCue.h"
 
 USTUWeaponFXComponent::USTUWeaponFXComponent()
 {
@@ -24,26 +25,28 @@ void USTUWeaponFXComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void USTUWeaponFXComponent::PlayImpactFX(const FHitResult& HitResult)
 {
-    auto Effect = DefaultImpactData;
+    auto ImpactData = DefaultImpactData;
 
 	if (HitResult.PhysMaterial.IsValid())
 	{
         const auto Material = HitResult.PhysMaterial.Get();
         if (ImpactDataMap.Contains(Material))
         {
-            Effect = ImpactDataMap[Material];
+            ImpactData = ImpactDataMap[Material];
         }
 	}
+
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactData.Sound, HitResult.ImpactPoint);
  
     UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-        GetWorld(), Effect.UNiagaraEffect, HitResult.ImpactPoint, HitResult.ImpactPoint.Rotation());
+        GetWorld(), ImpactData.UNiagaraEffect, HitResult.ImpactPoint, HitResult.ImpactPoint.Rotation());
 
     const auto DecalComponent = UGameplayStatics::SpawnDecalAtLocation(
-        GetWorld(), Effect.DecalData.Material, Effect.DecalData.Size, HitResult.ImpactPoint, HitResult.ImpactNormal.Rotation());
+        GetWorld(), ImpactData.DecalData.Material, ImpactData.DecalData.Size, HitResult.ImpactPoint, HitResult.ImpactNormal.Rotation());
  
     if (DecalComponent)
     {
-        DecalComponent->SetFadeOut(Effect.DecalData.LifeTime, Effect.DecalData.FadeOutTime);
+        DecalComponent->SetFadeOut(ImpactData.DecalData.LifeTime, ImpactData.DecalData.FadeOutTime);
     }
 }
 

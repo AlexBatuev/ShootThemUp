@@ -4,6 +4,7 @@
 
 // Weapon
 
+class USoundCue;
 class ASTUBaseWeapon;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnClipEmptySignature, ASTUBaseWeapon*);
 
@@ -83,6 +84,9 @@ struct FImpactData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
     FDecalData DecalData;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+    USoundCue* Sound;
 };
 
 // Game

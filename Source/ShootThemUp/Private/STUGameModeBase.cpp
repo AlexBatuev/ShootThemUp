@@ -7,6 +7,7 @@
 #include "STUGameInstance.h"
 #include "STUUtils.h"
 #include "Components/STURespawnComponent.h"
+#include "Components/STUWeaponComponent.h"
 #include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
 #include "Player/STUPlayerState.h"
@@ -73,6 +74,7 @@ bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDel
     const auto PauseState = Super::SetPause(PC, CanUnpauseDelegate);
     if (PauseState)
     {
+        StopAllFire();
         SetGameState(ESTUGameState::Pause);
     }
     return PauseState;
@@ -247,4 +249,16 @@ void ASTUGameModeBase::SetGameState(ESTUGameState NewState)
 
     GameState = NewState;
     OnGameStateChange.Broadcast(GameState);    
+}
+
+void ASTUGameModeBase::StopAllFire()
+{
+    for (const auto Pawn : TActorRange<APawn>(GetWorld()))
+    {
+        const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(Pawn);
+        if (!WeaponComponent) continue;
+
+        WeaponComponent->StopFire();
+        WeaponComponent->Zoom(false);
+    }
 }

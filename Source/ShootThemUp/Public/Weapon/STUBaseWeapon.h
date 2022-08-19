@@ -32,6 +32,8 @@ public:
     bool IsAmmoEmpty() const;
     bool IsAmmoFull() const;
 
+    virtual void Zoom(bool IsActive) {};
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USkeletalMeshComponent* WeaponMesh;

@@ -68,4 +68,6 @@ private:
     void GameOver();
 
     void SetGameState(ESTUGameState NewState);
+
+    void StopAllFire();
 };

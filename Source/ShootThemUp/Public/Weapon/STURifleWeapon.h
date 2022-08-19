@@ -41,10 +41,14 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "VFX")
     USTUWeaponFXComponent* WeaponFXComponent;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+    float FOVZoomAngle = 50.f;
+
     virtual void BeginPlay() override;
     virtual void MakeShot() override;
     virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
-
+    virtual void Zoom(bool IsActive) override;
+    
 private:
     FTimerHandle ShotTimerHandle;
 
@@ -53,6 +57,8 @@ private:
 
     UPROPERTY()
     UAudioComponent* FireAudioComponent;
+
+    float DefaultFOVAngle = 90.f;
 
     void MakeDamage(const FHitResult& HitResult);
     void InitFX();

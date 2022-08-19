@@ -81,13 +81,28 @@ bool ASTURifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     return true;
 }
 
+void ASTURifleWeapon::Zoom(bool IsActive)
+{
+    const auto Controller = Cast<APlayerController>(GetController());
+    if (!Controller || !Controller->PlayerCameraManager) return;
+
+    if (IsActive)
+    {
+        DefaultFOVAngle = Controller->PlayerCameraManager->GetFOVAngle();
+    }
+
+    Controller->PlayerCameraManager->SetFOV(IsActive ? FOVZoomAngle : DefaultFOVAngle);    
+}
+
 void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
 {
     const auto DamagedActor = Cast<ASTUBaseCharacter>(HitResult.GetActor());
     if (!DamagedActor)
         return;
 
-    DamagedActor->TakeDamage(DamageValue, FDamageEvent(), GetController(), this);
+    FPointDamageEvent PointDamageEvent;
+    PointDamageEvent.HitInfo = HitResult;
+    DamagedActor->TakeDamage(DamageValue, PointDamageEvent, GetController(), this);
 }
 
 void ASTURifleWeapon::InitFX()
